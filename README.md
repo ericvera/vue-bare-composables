@@ -75,7 +75,7 @@ const { state, getProps, getListeners, handleSubmit } = useForm(
 )
 
 // Use in template
-const handleSubmit = form.handleSubmit(async (data) => {
+const onSubmit = handleSubmit(async (data) => {
   // Handle form submission
   console.log(data)
 })
@@ -85,7 +85,7 @@ In your template:
 
 ```vue
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form @submit.prevent="onSubmit">
     <input
       id="email"
       type="email"
@@ -108,6 +108,50 @@ In your template:
 
     <button type="submit" :disabled="state.submitting.value">Submit</button>
   </form>
+</template>
+```
+
+### Visual Viewport Fixed Positioning
+
+```ts
+import { useFixToVisualViewport } from 'vue-bare-composables'
+
+// In your Vue component
+const element = ref<HTMLElement | null>(null)
+const onError = (error: unknown) => console.error(error)
+
+// For bottom positioning
+useFixToVisualViewport(element, onError, {
+  layoutViewportId: 'viewport',
+  location: 'bottom',
+})
+
+// For top positioning
+useFixToVisualViewport(element, onError, {
+  layoutViewportId: 'viewport',
+  location: 'top',
+})
+
+// For positioning above another element
+useFixToVisualViewport(element, onError, {
+  layoutViewportId: 'viewport',
+  location: 'above',
+  relativeElement: anotherElement,
+  distance: 10,
+})
+```
+
+In your template:
+
+```vue
+<template>
+  <!-- Your content -->
+  <div ref="element">
+    This element will maintain its position relative to the visual viewport
+  </div>
+
+  <!-- This should be in the main page body -->
+  <div id="viewport" />
 </template>
 ```
 
