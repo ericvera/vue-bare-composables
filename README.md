@@ -33,7 +33,13 @@ pnpm add vue-bare-composables
 
 ## Usage
 
-### Form Handling
+Available composables:
+
+- [useForm (Form Handling)](#useform-form-handling)
+- [useFixToVisualViewport (Visual Viewport Fixed Positioning)](#usefixtovisualviewport-visual-viewport-fixed-positioning)
+- [useIsWindowFocused (Window Focus Detection)](#useiswindowfocused-window-focus-detection)
+
+### useForm (Form Handling)
 
 ```ts
 import { useForm } from 'vue-bare-composables'
@@ -111,7 +117,7 @@ In your template:
 </template>
 ```
 
-### Visual Viewport Fixed Positioning
+### useFixToVisualViewport (Visual Viewport Fixed Positioning)
 
 ```ts
 import { useFixToVisualViewport } from 'vue-bare-composables'
@@ -152,6 +158,25 @@ In your template:
 
   <!-- This should be in the main page body -->
   <div id="viewport" />
+</template>
+```
+
+### useIsWindowFocused (Window Focus Detection)
+
+```ts
+import { useIsWindowFocused } from 'vue-bare-composables'
+
+// In your Vue component
+const isFocused = useIsWindowFocused()
+```
+
+In your template:
+
+```vue
+<template>
+  <div>
+    Window is currently {{ isFocused.value ? 'focused' : 'not focused' }}
+  </div>
 </template>
 ```
 
