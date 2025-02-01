@@ -20,7 +20,7 @@ it('should initialize with empty state', async () => {
   })
 })
 
-it('should enqueue and show a message', async () => {
+it('should enqueue and show a message without actions', async () => {
   const store = useSnackbarStore()
   store.enqueueMessage({ message: 'Test message' })
 
@@ -32,11 +32,7 @@ it('should enqueue and show a message', async () => {
 
   await vi.waitFor(() => {
     expect(store.message).toBe('Test message')
-    expect(store.actions).toHaveLength(1)
-
-    if (store.actions) {
-      expect(store.actions[0]?.text).toBe('Descartar')
-    }
+    expect(store.actions).toBeUndefined()
   })
 })
 
@@ -126,7 +122,7 @@ it('should clean up old messages', async () => {
     expect(store.message).toBe('Old message')
   })
 
-  // After 6 seconds, the message should be dismissed
+  // After 31 seconds, the message should be cleaned up
   vi.advanceTimersByTime(31000)
 
   store.enqueueMessage({ message: 'New message' })
