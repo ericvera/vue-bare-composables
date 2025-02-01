@@ -38,6 +38,7 @@ Available composables:
 - [useForm (Form Handling)](#useform-form-handling)
 - [useFixToVisualViewport (Visual Viewport Fixed Positioning)](#usefixtovisualviewport-visual-viewport-fixed-positioning)
 - [useIsWindowFocused (Window Focus Detection)](#useiswindowfocused-window-focus-detection)
+- [useSnackbarStore (Toast/Snackbar Notifications)](#usesnackbarstore-toastsnackbar-notifications)
 
 ### useForm (Form Handling)
 
@@ -179,6 +180,78 @@ In your template:
   </div>
 </template>
 ```
+
+### useSnackbarStore (Toast/Snackbar Notifications)
+
+A Pinia store for managing toast/snackbar notifications with support for:
+
+- Message queueing
+- Route-specific messages
+- Custom actions
+- Auto-dismissal
+- Manual dismissal
+
+```ts
+import { useSnackbarStore } from 'vue-bare-composables'
+
+// In your Vue component
+const snackbar = useSnackbarStore()
+
+// Simple message
+snackbar.enqueueMessage({ message: 'Operation successful!' })
+
+// Message with custom actions
+snackbar.enqueueMessage({
+  message: 'Item deleted',
+  actions: [
+    {
+      text: 'Undo',
+      callback: () => {
+        // Handle undo action
+      },
+    },
+  ],
+})
+
+// Route-specific message (only shows on specified route)
+snackbar.enqueueMessage({
+  message: 'Welcome to the dashboard',
+  route: '/dashboard',
+})
+
+// Set the current route whenever the route changes
+snackbar.setRouteFullPath('/dashboard')
+```
+
+In your template:
+
+```vue
+<template>
+  <div v-if="snackbar.message" class="snackbar">
+    {{ snackbar.message }}
+
+    <div v-if="snackbar.actions" class="actions">
+      <button
+        v-for="action in snackbar.actions"
+        :key="action.text"
+        @click="action.callback"
+      >
+        {{ action.text }}
+      </button>
+    </div>
+  </div>
+</template>
+```
+
+Key features:
+
+- Messages are queued and shown in order
+- Messages auto-dismiss after 6 seconds
+- Messages can be manually dismissed
+- Route-specific messages only show on matching routes
+- Custom actions with callbacks
+- Messages older than 30 seconds are automatically cleaned up
+- Reactive state management with Pinia
 
 ## License
 
