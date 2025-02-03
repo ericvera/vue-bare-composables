@@ -197,6 +197,10 @@ import { useSnackbarStore } from 'vue-bare-composables'
 // In your Vue component
 const snackbar = useSnackbarStore()
 
+// If used within Nuxt, you need to pass the Pinia store instance
+// const pinia = usePinia()
+// const snackbarStore = useSnackbarStore(pinia as Pinia)
+
 // Simple message
 snackbar.enqueueMessage({ message: 'Operation successful!' })
 
