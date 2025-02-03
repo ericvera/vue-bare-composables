@@ -6,13 +6,13 @@ export interface SnackbarAction {
   callback: () => void
 }
 
-interface SnackbarData {
+export interface SnackbarData {
   message: string
   actions?: SnackbarAction[]
   route?: string
 }
 
-interface SnackbarQueueItem extends SnackbarData {
+export interface SnackbarQueueItem extends SnackbarData {
   date: number
 }
 
@@ -87,8 +87,8 @@ export const useSnackbarStore = defineStore(
     }
 
     return {
-      message: message,
-      actions: actions,
+      message,
+      actions,
       enqueueMessage,
       dismiss,
       setRouteFullPath,
