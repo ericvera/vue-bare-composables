@@ -24,7 +24,7 @@
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable"
   },
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.7.0",
   "peerDependencies": {
     "vue": "^3.5.0"
   },
@@ -32,24 +32,24 @@
     "pinia": "^3.0.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
+    "@eslint/js": "^9.22.0",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^22.13.5",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-vue": "^5.2.3",
     "@vue/test-utils": "^2.4.6",
-    "eslint": "^9.21.0",
+    "eslint": "^9.22.0",
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
-    "lint-staged": "^15.4.3",
+    "lint-staged": "^15.5.0",
     "pinst": "^3.0.0",
-    "prettier": "^3.5.2",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1",
-    "vite": "^6.1.1",
-    "vite-plugin-dts": "^4.5.0",
-    "vitest": "^3.0.6",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1",
+    "vite": "^6.2.2",
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^3.0.9",
     "vue": "^3.5.13",
-    "vue-tsc": "^2.2.4"
+    "vue-tsc": "^2.2.8"
   },
   "prettier": {
     "tabWidth": 2,
