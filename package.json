@@ -30,12 +30,12 @@
     "vue": "3.x"
   },
   "devDependencies": {
-    "@eslint/js": "^9.22.0",
+    "@eslint/js": "^9.23.0",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.13.11",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/test-utils": "^2.4.6",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
     "lint-staged": "^15.5.0",
