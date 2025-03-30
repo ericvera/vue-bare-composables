@@ -223,3 +223,78 @@ it('should not trim strings by default', async () => {
   expect(state.errors.name.value).toBe('Name is too long')
   expect(submit).not.toHaveBeenCalled()
 })
+
+it('should respect trimStringExclude when trimming strings', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+    trimStringExclude: ['name'], // Exclude name from trimming
+    validate: {
+      name: (value: unknown) =>
+        typeof value === 'string' && value.length > 4
+          ? 'Name is too long'
+          : undefined,
+    },
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set values with leading/trailing spaces
+  state.values.name.value = '  John  '
+  state.values.email.value = '  john@example.com  '
+  await onSubmit()
+
+  // Name should not be trimmed (validation should fail)
+  expect(state.errors.name.value).toBe('Name is too long')
+  expect(submit).not.toHaveBeenCalled()
+})
+
+it('should handle empty trimStringExclude array', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+    trimStringExclude: [], // Empty array should not exclude any fields
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set values with leading/trailing spaces
+  state.values.name.value = '  John  '
+  state.values.email.value = '  john@example.com  '
+  await onSubmit()
+
+  // All string fields should be trimmed
+  expect(submit).toHaveBeenCalledWith({
+    name: 'John',
+    email: 'john@example.com',
+    age: 25,
+  })
+})
+
+// Type tests
+it('should enforce type constraints for trimStringExclude', () => {
+  // This should compile
+  useForm<TestForm>(initialValues, {
+    trimStrings: true,
+    trimStringExclude: ['name'],
+  })
+
+  // This should compile
+  useForm<TestForm>(initialValues, {
+    trimStrings: false,
+  })
+
+  // This should compile
+  useForm<TestForm>(initialValues, {
+    trimStrings: false,
+    // @ts-expect-error trimStringExclude should not be allowed when trimStrings is false
+    trimStringExclude: ['name'],
+  })
+
+  // This should compile
+  useForm<TestForm>(initialValues, {
+    trimStrings: true,
+    // @ts-expect-error trimStringExclude should only accept keys of T
+    trimStringExclude: ['invalidKey'],
+  })
+})

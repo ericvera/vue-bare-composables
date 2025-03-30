@@ -138,6 +138,7 @@ The `useForm` composable accepts the following options:
 - `validate`: Object containing field-level validation functions
 - `globalValidate`: Function for form-level validation
 - `trimStrings`: Boolean to enable automatic trimming of string values before validation and submission (defaults to false)
+- `trimStringExclude`: Array of field names to exclude from string trimming (only available when `trimStrings` is `true`)
 
 ### Example with String Trimming
 
@@ -146,9 +147,11 @@ const { state, handleSubmit } = useForm(
   {
     name: '',
     email: '',
+    password: '',
   },
   {
     trimStrings: true, // Enable automatic string trimming
+    trimStringExclude: ['password'], // Exclude password from trimming
     validate: {
       name: (value) => {
         // Value will be automatically trimmed before validation
@@ -160,16 +163,28 @@ const { state, handleSubmit } = useForm(
           return 'Name must be at least 3 characters'
         }
       },
+      password: (value) => {
+        // Value will NOT be trimmed because it's in trimStringExclude
+        if (!value) {
+          return 'Password is required'
+        }
+
+        if (value.length < 8) {
+          return 'Password must be at least 8 characters'
+        }
+      },
     },
   },
 )
 
-// When submitting, string values will be automatically trimmed
+// When submitting, string values will be automatically trimmed except for excluded fields
 const onSubmit = handleSubmit(async (data) => {
-  // data.name and data.email will be trimmed
+  // data.name and data.email will be trimmed, but data.password won't
   console.log(data)
 })
 ```
+
+> **Note**: The `trimStringExclude` option is only available when `trimStrings` is set to `true`. TypeScript will enforce this constraint at compile time.
 
 ### useFixToVisualViewport (Visual Viewport Fixed Positioning)
 

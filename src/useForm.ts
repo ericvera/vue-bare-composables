@@ -32,13 +32,26 @@ type GlobalValidator<T> = (
   errorSetters: ErrorSetters<T>,
 ) => void | Promise<void>
 
+type BaseFormOptions<T> = {
+  validate?: Validators<T>
+  globalValidate?: GlobalValidator<T>
+}
+
+interface FormOptionsWithoutTrim<T> extends BaseFormOptions<T> {
+  trimStrings?: false
+  trimStringExclude?: never
+}
+
+interface FormOptionsWithTrim<T> extends BaseFormOptions<T> {
+  trimStrings: true
+  trimStringExclude?: (keyof T)[]
+}
+
+type FormOptions<T> = FormOptionsWithoutTrim<T> | FormOptionsWithTrim<T>
+
 export const useForm = <T extends object>(
   initialValues: T | (() => T),
-  options: {
-    validate?: Validators<T>
-    globalValidate?: GlobalValidator<T>
-    trimStrings?: boolean
-  } = {},
+  options: FormOptions<T> = {},
 ) => {
   const values: ValueRefs<T> = {} as ValueRefs<T>
   const errors: ErrorRefs<T> = {} as ErrorRefs<T>
@@ -114,11 +127,14 @@ export const useForm = <T extends object>(
 
     for (const key in values) {
       const validator = options.validate?.[key]
-
       let value: unknown = values[key].value
 
-      // Trim string values if the option is enabled
-      if (options.trimStrings && typeof value === 'string') {
+      // Trim string values if the option is enabled and the field is not excluded
+      if (
+        options.trimStrings &&
+        typeof value === 'string' &&
+        !options.trimStringExclude?.includes(key)
+      ) {
         value = value.trim()
       }
 
@@ -178,7 +194,10 @@ export const useForm = <T extends object>(
       // Trim string values in the final data if the option is enabled
       if (options.trimStrings) {
         for (const key in data) {
-          if (typeof data[key] === 'string') {
+          if (
+            typeof data[key] === 'string' &&
+            !options.trimStringExclude?.includes(key)
+          ) {
             data[key] = data[key].trim() as T[typeof key]
           }
         }
