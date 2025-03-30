@@ -141,8 +141,8 @@ it('should trim strings during validation when trimStrings is enabled', async ()
     trimStrings: true,
     validate: {
       name: (value: unknown) =>
-        typeof value === 'string' && value.length < 3
-          ? 'Name must be at least 3 characters'
+        typeof value === 'string' && value.length > 4
+          ? 'Name is too long'
           : undefined,
     },
   })
@@ -206,8 +206,8 @@ it('should not trim strings by default', async () => {
   const { state, handleSubmit } = useForm<TestForm>(initialValues, {
     validate: {
       name: (value: unknown) =>
-        typeof value === 'string' && value.length < 3
-          ? 'Name must be at least 3 characters'
+        typeof value === 'string' && value.length > 4
+          ? 'Name is too long'
           : undefined,
     },
   })
@@ -220,6 +220,6 @@ it('should not trim strings by default', async () => {
   await onSubmit()
 
   // Should fail validation because spaces are not trimmed
-  expect(state.errors.name.value).toBe('Name must be at least 3 characters')
+  expect(state.errors.name.value).toBe('Name is too long')
   expect(submit).not.toHaveBeenCalled()
 })
