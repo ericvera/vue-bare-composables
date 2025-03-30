@@ -37,6 +37,7 @@ export const useForm = <T extends object>(
   options: {
     validate?: Validators<T>
     globalValidate?: GlobalValidator<T>
+    trimStrings?: boolean
   } = {},
 ) => {
   const values: ValueRefs<T> = {} as ValueRefs<T>
@@ -114,8 +115,15 @@ export const useForm = <T extends object>(
     for (const key in values) {
       const validator = options.validate?.[key]
 
+      let value: unknown = values[key].value
+
+      // Trim string values if the option is enabled
+      if (options.trimStrings && typeof value === 'string') {
+        value = value.trim()
+      }
+
       if (typeof validator === 'function') {
-        setError(key, await validator(values[key].value), false)
+        setError(key, await validator(value), false)
       }
     }
 
@@ -166,6 +174,16 @@ export const useForm = <T extends object>(
       }
 
       const data = getData()
+
+      // Trim string values in the final data if the option is enabled
+      if (options.trimStrings) {
+        for (const key in data) {
+          if (typeof data[key] === 'string') {
+            data[key] = data[key].trim() as T[typeof key]
+          }
+        }
+      }
+
       await callback(data)
       submitting.value = false
     },

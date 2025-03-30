@@ -78,6 +78,8 @@ const { state, getProps, getListeners, handleSubmit } = useForm(
         setError('password', 'Password is too common')
       }
     },
+    // Automatically trim string values before validation and submission
+    trimStrings: true,
   },
 )
 
@@ -116,6 +118,57 @@ In your template:
     <button type="submit" :disabled="state.submitting.value">Submit</button>
   </form>
 </template>
+```
+
+The `useForm` composable provides the following features:
+
+- **Type-safe form handling**: Full TypeScript support with strict type checking
+- **Field-level validation**: Validate individual fields with custom validation functions
+- **Form-level validation**: Validate multiple fields together or perform cross-field validation
+- **Automatic error handling**: Display validation errors and manage error states
+- **Form submission handling**: Handle form submissions with loading states
+- **String trimming**: Optionally trim string values before validation and submission
+- **Form reset**: Reset form to initial values
+- **Reactive state**: All form state is reactive and can be watched for changes
+
+### Options
+
+The `useForm` composable accepts the following options:
+
+- `validate`: Object containing field-level validation functions
+- `globalValidate`: Function for form-level validation
+- `trimStrings`: Boolean to enable automatic trimming of string values before validation and submission (defaults to false)
+
+### Example with String Trimming
+
+```ts
+const { state, handleSubmit } = useForm(
+  {
+    name: '',
+    email: '',
+  },
+  {
+    trimStrings: true, // Enable automatic string trimming
+    validate: {
+      name: (value) => {
+        // Value will be automatically trimmed before validation
+        if (!value) {
+          return 'Name is required'
+        }
+
+        if (value.length < 3) {
+          return 'Name must be at least 3 characters'
+        }
+      },
+    },
+  },
+)
+
+// When submitting, string values will be automatically trimmed
+const onSubmit = handleSubmit(async (data) => {
+  // data.name and data.email will be trimmed
+  console.log(data)
+})
 ```
 
 ### useFixToVisualViewport (Visual Viewport Fixed Positioning)

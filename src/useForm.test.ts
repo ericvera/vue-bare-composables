@@ -135,3 +135,91 @@ it('should provide correct props for form fields', () => {
   expect(nameProps.name).toBe('name')
   expect(nameProps.value).toBe('John')
 })
+
+it('should trim strings during validation when trimStrings is enabled', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+    validate: {
+      name: (value: unknown) =>
+        typeof value === 'string' && value.length < 3
+          ? 'Name must be at least 3 characters'
+          : undefined,
+    },
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set value with leading/trailing spaces
+  state.values.name.value = '  John  '
+  await onSubmit()
+
+  // Should pass validation because spaces are trimmed
+  expect(state.errors.name.value).toBeUndefined()
+  expect(submit).toHaveBeenCalled()
+})
+
+it('should trim strings in submitted data when trimStrings is enabled', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set values with leading/trailing spaces
+  state.values.name.value = '  John  '
+  state.values.email.value = '  john@example.com  '
+  await onSubmit()
+
+  // Check that the submitted data has trimmed strings
+  expect(submit).toHaveBeenCalledWith({
+    name: 'John',
+    email: 'john@example.com',
+    age: 25,
+  })
+})
+
+it('should not affect non-string values when trimStrings is enabled', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set values with leading/trailing spaces
+  state.values.name.value = '  John  '
+  state.values.email.value = '  john@example.com  '
+  state.values.age.value = 30
+  await onSubmit()
+
+  // Check that non-string values remain unchanged
+  expect(submit).toHaveBeenCalledWith({
+    name: 'John',
+    email: 'john@example.com',
+    age: 30,
+  })
+})
+
+it('should not trim strings by default', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    validate: {
+      name: (value: unknown) =>
+        typeof value === 'string' && value.length < 3
+          ? 'Name must be at least 3 characters'
+          : undefined,
+    },
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set value with leading/trailing spaces
+  state.values.name.value = '  John  '
+  await onSubmit()
+
+  // Should fail validation because spaces are not trimmed
+  expect(state.errors.name.value).toBe('Name must be at least 3 characters')
+  expect(submit).not.toHaveBeenCalled()
+})
