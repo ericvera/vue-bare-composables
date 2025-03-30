@@ -269,6 +269,58 @@ it('should handle empty trimStringExclude array', async () => {
     email: 'john@example.com',
     age: 25,
   })
+
+  // Internal state should be updated with trimmed values
+  expect(state.values.name.value).toBe('John')
+  expect(state.values.email.value).toBe('john@example.com')
+})
+
+it('should update internal state with trimmed values after submission', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+    trimStringExclude: ['name'], // Exclude name from trimming
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set values with leading/trailing spaces
+  state.values.name.value = '  John  '
+  state.values.email.value = '  john@example.com  '
+  await onSubmit()
+
+  // Name should not be trimmed (excluded)
+  expect(state.values.name.value).toBe('  John  ')
+  // Email should be trimmed
+  expect(state.values.email.value).toBe('john@example.com')
+})
+
+it('should maintain internal state consistency after submission', async () => {
+  const { state, handleSubmit } = useForm<TestForm>(initialValues, {
+    trimStrings: true,
+  })
+
+  const submit = vi.fn()
+  const onSubmit = handleSubmit(submit)
+
+  // Set values with leading/trailing spaces
+  state.values.name.value = '  John  '
+  state.values.email.value = '  john@example.com  '
+  await onSubmit()
+
+  // Get the data again to verify consistency
+  const data = {
+    name: state.values.name.value,
+    email: state.values.email.value,
+    age: state.values.age.value,
+  }
+
+  // Data should match what was submitted
+  expect(data).toEqual({
+    name: 'John',
+    email: 'john@example.com',
+    age: 25,
+  })
 })
 
 // Type tests

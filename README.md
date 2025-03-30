@@ -180,11 +180,14 @@ const { state, handleSubmit } = useForm(
 // When submitting, string values will be automatically trimmed except for excluded fields
 const onSubmit = handleSubmit(async (data) => {
   // data.name and data.email will be trimmed, but data.password won't
+  // The form's internal state will also be updated with the trimmed values
   console.log(data)
 })
 ```
 
 > **Note**: The `trimStringExclude` option is only available when `trimStrings` is set to `true`. TypeScript will enforce this constraint at compile time.
+>
+> When string trimming is enabled, the form's internal state will be automatically updated with the trimmed values after a successful submission. This ensures that the form's state always matches what was actually submitted.
 
 ### useFixToVisualViewport (Visual Viewport Fixed Positioning)
 

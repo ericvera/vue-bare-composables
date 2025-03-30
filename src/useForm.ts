@@ -198,7 +198,13 @@ export const useForm = <T extends object>(
             typeof data[key] === 'string' &&
             !options.trimStringExclude?.includes(key)
           ) {
-            data[key] = data[key].trim() as T[typeof key]
+            const trimmedValue = data[key].trim() as T[typeof key]
+
+            data[key] = trimmedValue
+            // Update internal state with trimmed value
+            values[key].value = trimmedValue as UnwrapRef<
+              T[Extract<keyof T, string>]
+            >
           }
         }
       }
