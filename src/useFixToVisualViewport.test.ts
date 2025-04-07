@@ -20,6 +20,7 @@ type WrapperOptions =
       location: 'bottom' | 'top'
       relativeElement?: never
       distance?: never
+      useRefOptions?: boolean
     }
   | {
       element?: HTMLElement | null
@@ -27,6 +28,7 @@ type WrapperOptions =
       location: 'above'
       relativeElement: HTMLElement | null
       distance: number
+      useRefOptions?: boolean
     }
 
 const createWrapper = (options: WrapperOptions) => {
@@ -34,6 +36,7 @@ const createWrapper = (options: WrapperOptions) => {
     element = document.createElement('div'),
     layoutViewportId = 'viewport',
     location,
+    useRefOptions = false,
   } = options
 
   const TestComponent = defineComponent({
@@ -41,17 +44,35 @@ const createWrapper = (options: WrapperOptions) => {
       const elementRef = ref(element)
 
       if (location === 'above') {
-        useFixToVisualViewport(elementRef, {
-          layoutViewportId,
-          location,
-          relativeElement: options.relativeElement,
-          distance: options.distance,
-        })
+        if (useRefOptions) {
+          const optionsRef = ref({
+            layoutViewportId,
+            location,
+            relativeElement: options.relativeElement,
+            distance: options.distance,
+          })
+          useFixToVisualViewport(elementRef, optionsRef)
+        } else {
+          useFixToVisualViewport(elementRef, {
+            layoutViewportId,
+            location,
+            relativeElement: options.relativeElement,
+            distance: options.distance,
+          })
+        }
       } else {
-        useFixToVisualViewport(elementRef, {
-          layoutViewportId,
-          location,
-        })
+        if (useRefOptions) {
+          const optionsRef = ref({
+            layoutViewportId,
+            location,
+          })
+          useFixToVisualViewport(elementRef, optionsRef)
+        } else {
+          useFixToVisualViewport(elementRef, {
+            layoutViewportId,
+            location,
+          })
+        }
       }
 
       return () => h('div')
@@ -298,5 +319,107 @@ it('should handle cleanup on unmount for above position', () => {
   wrapper.unmount()
   expect(mockDisconnect).toHaveBeenCalled()
 
+  document.body.removeChild(viewport)
+})
+
+it('should handle ref-based options for bottom position', () => {
+  const addEventListenerSpy = vi.spyOn(window, 'addEventListener')
+  const viewport = document.createElement('div')
+  viewport.id = 'viewport'
+  document.body.appendChild(viewport)
+
+  const wrapper = createWrapper({
+    location: 'bottom',
+    useRefOptions: true,
+  })
+
+  expect(addEventListenerSpy).toHaveBeenCalledWith(
+    'resize',
+    expect.any(Function),
+    true,
+  )
+  expect(addEventListenerSpy).toHaveBeenCalledWith(
+    'scroll',
+    expect.any(Function),
+    true,
+  )
+
+  wrapper.unmount()
+  document.body.removeChild(viewport)
+})
+
+it('should handle ref-based options for above position', () => {
+  const viewport = document.createElement('div')
+  const relativeElement = document.createElement('div')
+  viewport.id = 'viewport'
+  document.body.appendChild(viewport)
+
+  const mockObserve = vi.fn()
+  const mockDisconnect = vi.fn()
+  const MockMutationObserver = vi.fn(() => ({
+    observe: mockObserve,
+    disconnect: mockDisconnect,
+  }))
+
+  vi.stubGlobal('MutationObserver', MockMutationObserver)
+
+  const wrapper = createWrapper({
+    location: 'above',
+    relativeElement,
+    distance: 10,
+    useRefOptions: true,
+  })
+
+  expect(MockMutationObserver).toHaveBeenCalled()
+  expect(mockObserve).toHaveBeenCalledWith(relativeElement, {
+    childList: false,
+    subtree: true,
+    attributes: true,
+  })
+
+  wrapper.unmount()
+  document.body.removeChild(viewport)
+})
+
+it('should update when ref options change', () => {
+  vi.useFakeTimers()
+  const viewport = document.createElement('div')
+  viewport.id = 'viewport'
+  document.body.appendChild(viewport)
+
+  const TestComponentWithChangingOptions = defineComponent({
+    setup() {
+      const element = ref(document.createElement('div'))
+
+      // Use a properly typed options ref that can accept both location values
+      const options = ref({
+        layoutViewportId: 'viewport',
+        location: 'bottom' as 'bottom' | 'top',
+      })
+
+      useFixToVisualViewport(element, options)
+
+      // Change options after mounting
+      setTimeout(() => {
+        options.value = {
+          layoutViewportId: 'viewport',
+          location: 'top',
+        }
+      }, 100)
+
+      return () => h('div')
+    },
+  })
+
+  const wrapper = mount(TestComponentWithChangingOptions)
+
+  // Run initial timers
+  vi.advanceTimersByTime(100)
+
+  // Trigger a resize to force position update
+  window.dispatchEvent(new Event('resize'))
+  vi.runAllTimers()
+
+  wrapper.unmount()
   document.body.removeChild(viewport)
 })

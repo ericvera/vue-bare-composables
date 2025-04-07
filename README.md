@@ -216,6 +216,17 @@ useFixToVisualViewport(element, {
   relativeElement: anotherElement,
   distance: 10,
 })
+
+// With reactive options (options that can change over time)
+const viewportOptions = ref({
+  layoutViewportId: 'viewport',
+  location: 'bottom',
+})
+
+useFixToVisualViewport(element, viewportOptions)
+
+// The position will update reactively when options change
+viewportOptions.value.location = 'top'
 ```
 
 In your template:

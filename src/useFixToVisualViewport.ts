@@ -1,31 +1,32 @@
 import { onUnmounted, ref, Ref, toValue, watchEffect } from 'vue'
 
-export interface UseDeviceFixedOptionsBase {
+export interface UseFixToVisualViewportOptionsBase {
   layoutViewportId: string
 }
 
-export interface UseDeviceFixedOptionsStatic extends UseDeviceFixedOptionsBase {
+export interface UseFixToVisualViewportOptionsStatic
+  extends UseFixToVisualViewportOptionsBase {
   location: 'bottom' | 'top'
   relativeElement?: never
   distance?: never
 }
 
-export interface UseDeviceFixedOptionsRelative
-  extends UseDeviceFixedOptionsBase {
+export interface UseFixToVisualViewportOptionsRelative
+  extends UseFixToVisualViewportOptionsBase {
   location: 'above'
   relativeElement: HTMLElement | null
   distance: number
 }
 
-export type UseDeviceFixedOptions =
-  | UseDeviceFixedOptionsStatic
-  | UseDeviceFixedOptionsRelative
+export type UseFixToVisualViewportOptions =
+  | UseFixToVisualViewportOptionsStatic
+  | UseFixToVisualViewportOptionsRelative
 
 const updateElementPositionToViewportChanges = (
   element: HTMLElement | null,
   layoutViewport: HTMLElement | null,
   visualViewport: VisualViewport | null,
-  { location, relativeElement, distance }: UseDeviceFixedOptions,
+  { location, relativeElement, distance }: UseFixToVisualViewportOptions,
 ) => {
   const elementValue = toValue(element)
 
@@ -101,7 +102,7 @@ export const useFixToVisualViewport = (
     | (() => HTMLElement | null)
     | (HTMLElement | null)
     | Ref<HTMLElement | null>,
-  options: UseDeviceFixedOptions,
+  options: UseFixToVisualViewportOptions | Ref<UseFixToVisualViewportOptions>,
 ): void => {
   const layoutViewport = ref<HTMLElement | null>(null)
   const visualViewport = ref<VisualViewport | null>(null)
@@ -119,7 +120,7 @@ export const useFixToVisualViewport = (
         toValue(elementGetter),
         layoutViewport.value,
         visualViewport.value,
-        options,
+        toValue(options),
       )
     }, 100)
   }
@@ -130,17 +131,28 @@ export const useFixToVisualViewport = (
       return
     }
 
-    layoutViewport.value = document.getElementById(options.layoutViewportId)
+    const optionsValue = toValue(options)
+
+    if (!optionsValue.layoutViewportId) {
+      console.error(
+        'useFixToVisualViewport: layoutViewportId is not defined in options',
+      )
+      return
+    }
+
+    layoutViewport.value = document.getElementById(
+      optionsValue.layoutViewportId,
+    )
 
     if (!layoutViewport.value) {
       throw new Error(
-        `Layout viewport element with id "${options.layoutViewportId}" not found`,
+        `Layout viewport element with id "${optionsValue.layoutViewportId}" not found`,
       )
     }
 
     visualViewport.value = window.visualViewport
 
-    const { location, relativeElement } = options
+    const { location, relativeElement } = optionsValue
 
     if (location === 'above') {
       if (relativeElement !== null) {
@@ -179,7 +191,9 @@ export const useFixToVisualViewport = (
       observer.value.disconnect()
     }
 
-    if (options.location !== 'above') {
+    const optionsValue = toValue(options)
+
+    if (optionsValue.location !== 'above') {
       window.removeEventListener('resize', updatePosition)
       window.removeEventListener('scroll', updatePosition)
       document.scrollingElement?.removeEventListener('resize', updatePosition)
