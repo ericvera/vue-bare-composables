@@ -16,7 +16,6 @@ afterAll(() => {
 type WrapperOptions =
   | {
       element?: HTMLElement | null
-      onError?: (error: unknown) => void
       layoutViewportId?: string
       location: 'bottom' | 'top'
       relativeElement?: never
@@ -24,7 +23,6 @@ type WrapperOptions =
     }
   | {
       element?: HTMLElement | null
-      onError?: (error: unknown) => void
       layoutViewportId?: string
       location: 'above'
       relativeElement: HTMLElement | null
@@ -34,7 +32,6 @@ type WrapperOptions =
 const createWrapper = (options: WrapperOptions) => {
   const {
     element = document.createElement('div'),
-    onError = vi.fn(),
     layoutViewportId = 'viewport',
     location,
   } = options
@@ -44,14 +41,14 @@ const createWrapper = (options: WrapperOptions) => {
       const elementRef = ref(element)
 
       if (location === 'above') {
-        useFixToVisualViewport(elementRef, onError, {
+        useFixToVisualViewport(elementRef, {
           layoutViewportId,
           location,
           relativeElement: options.relativeElement,
           distance: options.distance,
         })
       } else {
-        useFixToVisualViewport(elementRef, onError, {
+        useFixToVisualViewport(elementRef, {
           layoutViewportId,
           location,
         })
@@ -65,31 +62,22 @@ const createWrapper = (options: WrapperOptions) => {
 }
 
 it('should handle null element', () => {
-  const onError = vi.fn()
-
-  const wrapper = createWrapper({
-    element: null,
-    onError,
-    location: 'bottom',
-  })
-
-  expect(onError).not.toHaveBeenCalled()
-  wrapper.unmount()
+  expect(() => {
+    const wrapper = createWrapper({
+      element: null,
+      location: 'bottom',
+    })
+    wrapper.unmount()
+  }).not.toThrow()
 })
 
 it('should handle missing layout viewport element', () => {
-  const onError = vi.fn()
-
-  const wrapper = createWrapper({
-    onError,
-    layoutViewportId: 'non-existent',
-    location: 'bottom',
-  })
-
-  expect(onError).toHaveBeenCalledWith(
-    new Error('Layout viewport element with id "non-existent" not found'),
-  )
-  wrapper.unmount()
+  expect(() => {
+    createWrapper({
+      layoutViewportId: 'non-existent',
+      location: 'bottom',
+    })
+  }).toThrow('Layout viewport element with id "non-existent" not found')
 })
 
 it('should set up event listeners for bottom position', () => {

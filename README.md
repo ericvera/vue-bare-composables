@@ -196,22 +196,21 @@ import { useFixToVisualViewport } from 'vue-bare-composables'
 
 // In your Vue component
 const element = ref<HTMLElement | null>(null)
-const onError = (error: unknown) => console.error(error)
 
 // For bottom positioning
-useFixToVisualViewport(element, onError, {
+useFixToVisualViewport(element, {
   layoutViewportId: 'viewport',
   location: 'bottom',
 })
 
 // For top positioning
-useFixToVisualViewport(element, onError, {
+useFixToVisualViewport(element, {
   layoutViewportId: 'viewport',
   location: 'top',
 })
 
 // For positioning above another element
-useFixToVisualViewport(element, onError, {
+useFixToVisualViewport(element, {
   layoutViewportId: 'viewport',
   location: 'above',
   relativeElement: anotherElement,

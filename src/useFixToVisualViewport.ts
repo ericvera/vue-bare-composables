@@ -22,7 +22,6 @@ export type UseDeviceFixedOptions =
   | UseDeviceFixedOptionsRelative
 
 const updateElementPositionToViewportChanges = (
-  onError: (error: unknown) => void,
   element: HTMLElement | null,
   layoutViewport: HTMLElement | null,
   visualViewport: VisualViewport | null,
@@ -82,12 +81,9 @@ const updateElementPositionToViewportChanges = (
       break
     }
     default: {
-      onError(
-        new Error(
-          `Unexpected location option in useVisualViewportFixed: ${location as string}`,
-        ),
+      throw new Error(
+        `Unexpected location option in useVisualViewportFixed: ${location as string}`,
       )
-      return
     }
   }
 
@@ -105,7 +101,6 @@ export const useFixToVisualViewport = (
     | (() => HTMLElement | null)
     | (HTMLElement | null)
     | Ref<HTMLElement | null>,
-  onError: (error: unknown) => void,
   options: UseDeviceFixedOptions,
 ): void => {
   const layoutViewport = ref<HTMLElement | null>(null)
@@ -121,7 +116,6 @@ export const useFixToVisualViewport = (
 
     timeout.value = setTimeout(() => {
       updateElementPositionToViewportChanges(
-        onError,
         toValue(elementGetter),
         layoutViewport.value,
         visualViewport.value,
@@ -139,12 +133,9 @@ export const useFixToVisualViewport = (
     layoutViewport.value = document.getElementById(options.layoutViewportId)
 
     if (!layoutViewport.value) {
-      onError(
-        new Error(
-          `Layout viewport element with id "${options.layoutViewportId}" not found`,
-        ),
+      throw new Error(
+        `Layout viewport element with id "${options.layoutViewportId}" not found`,
       )
-      return
     }
 
     visualViewport.value = window.visualViewport
