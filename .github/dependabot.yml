@@ -9,6 +9,11 @@ updates:
     directory: '/' # Location of package manifests
     schedule:
       interval: 'weekly'
+    commit-message:
+      # This will trigger a release for all updates
+      prefix: 'feat'
+      prefix-development: 'feat'
+      include: 'scope'
     groups:
       dev-non-major:
         applies-to: version-updates
