@@ -1,3 +1,5 @@
+name: Publish on push
+
 on:
   push:
     branches:
