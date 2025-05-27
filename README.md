@@ -331,7 +331,7 @@ In your template:
 Key features:
 
 - Messages are queued and shown in order
-- Messages auto-dismiss after 6 seconds
+- Messages auto-dismiss after 8 seconds
 - Messages can be manually dismissed
 - Route-specific messages only show on matching routes
 - Custom actions with callbacks
