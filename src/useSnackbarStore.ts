@@ -42,7 +42,7 @@ export const useSnackbarStore = defineStore(
       actions.value = next.actions
       message.value = next.message
 
-      timeoutRef.value = setTimeout(dismiss, 6000)
+      timeoutRef.value = setTimeout(dismiss, 8000)
     }
 
     const dequeue = () => {
