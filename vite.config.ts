@@ -1,9 +1,10 @@
 import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vite'
+import { defineConfig, PluginOption } from 'vite'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-  plugins: [vue(), dts()],
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  plugins: [vue(), dts()] as PluginOption[],
   build: {
     lib: {
       entry: 'src/index.ts',
