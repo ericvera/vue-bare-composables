@@ -46,7 +46,8 @@ it('should dismiss message after timeout', async () => {
     expect(store.message).toBe('Test message')
   })
 
-  vi.advanceTimersByTime(8000) // Default timeout
+  // Default timeout
+  vi.advanceTimersByTime(8000)
 
   await vi.waitFor(() => {
     expect(store.message).toBeUndefined()

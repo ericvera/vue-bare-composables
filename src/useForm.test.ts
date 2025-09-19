@@ -114,7 +114,9 @@ it('should update field value and clear errors on input', async () => {
   )
 
   // Set error first
-  const onSubmit = handleSubmit(async () => {})
+  const onSubmit = handleSubmit(async () => {
+    // Empty handler for test
+  })
   state.values.name.value = ''
   await onSubmit()
   expect(state.errors.name.value).toBe('Name is required')
@@ -227,7 +229,8 @@ it('should not trim strings by default', async () => {
 it('should respect trimStringExclude when trimming strings', async () => {
   const { state, handleSubmit } = useForm<TestForm>(initialValues, {
     trimStrings: true,
-    trimStringExclude: ['name'], // Exclude name from trimming
+    // Exclude name from trimming
+    trimStringExclude: ['name'],
     validate: {
       name: (value: unknown) =>
         typeof value === 'string' && value.length > 4
@@ -252,7 +255,8 @@ it('should respect trimStringExclude when trimming strings', async () => {
 it('should handle empty trimStringExclude array', async () => {
   const { state, handleSubmit } = useForm<TestForm>(initialValues, {
     trimStrings: true,
-    trimStringExclude: [], // Empty array should not exclude any fields
+    // Empty array should not exclude any fields
+    trimStringExclude: [],
   })
 
   const submit = vi.fn()
@@ -278,7 +282,8 @@ it('should handle empty trimStringExclude array', async () => {
 it('should update internal state with trimmed values after submission', async () => {
   const { state, handleSubmit } = useForm<TestForm>(initialValues, {
     trimStrings: true,
-    trimStringExclude: ['name'], // Exclude name from trimming
+    // Exclude name from trimming
+    trimStringExclude: ['name'],
   })
 
   const submit = vi.fn()
@@ -339,7 +344,8 @@ it('should enforce type constraints for trimStringExclude', () => {
   // This should compile
   useForm<TestForm>(initialValues, {
     trimStrings: false,
-    // @ts-expect-error trimStringExclude should not be allowed when trimStrings is false
+    // @ts-expect-error trimStringExclude should not be allowed when
+    // trimStrings is false
     trimStringExclude: ['name'],
   })
 

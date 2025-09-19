@@ -49,7 +49,8 @@ const updateElementPositionToViewportChanges = (
     case 'bottom': {
       const agent = navigator.userAgent.toLowerCase()
 
-      // NOTE: Check this works as gecko is not enough as many browsers use "like Gecko"
+      // NOTE: Check this works as gecko is not enough as many browsers use
+      // "like Gecko"
       const isGeckoEngine = agent.includes('gecko') && agent.includes('firefox')
 
       const layoutViewportRect = layoutViewport.getBoundingClientRect()

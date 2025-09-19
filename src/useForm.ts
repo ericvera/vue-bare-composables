@@ -32,7 +32,7 @@ type GlobalValidator<T> = (
   errorSetters: ErrorSetters<T>,
 ) => void | Promise<void>
 
-type BaseFormOptions<T> = {
+interface BaseFormOptions<T> {
   validate?: Validators<T>
   globalValidate?: GlobalValidator<T>
 }
@@ -129,7 +129,8 @@ export const useForm = <T extends object>(
       const validator = options.validate?.[key]
       let value: unknown = values[key].value
 
-      // Trim string values if the option is enabled and the field is not excluded
+      // Trim string values if the option is enabled and the field is not
+      // excluded
       if (
         options.trimStrings &&
         typeof value === 'string' &&
