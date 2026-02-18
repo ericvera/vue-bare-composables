@@ -1,4 +1,5 @@
-import { ref, watch, type Ref, type UnwrapRef } from 'vue'
+import { computed, ref, watch, type Ref, type UnwrapRef } from 'vue'
+import { deepEqual } from './internal/deepEqual.js'
 
 type ValueRefs<T> = {
   [key in keyof T]: Ref<UnwrapRef<T[key]>>
@@ -57,6 +58,7 @@ export const useForm = <T extends object>(
   const errors: ErrorRefs<T> = {} as ErrorRefs<T>
   const globalError = ref<string | undefined>()
   const submitting = ref(false)
+  const isDirty = computed(() => !deepEqual(getData(), getInitialValues()))
 
   let internalErrors: Errors<T> = {}
 
@@ -173,6 +175,7 @@ export const useForm = <T extends object>(
   return {
     state: {
       submitting,
+      isDirty,
       values,
       errors,
       globalError,

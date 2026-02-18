@@ -46,7 +46,7 @@ Available composables:
 import { useForm } from 'vue-bare-composables'
 
 // In your Vue component
-const { state, getProps, getListeners, handleSubmit } = useForm(
+const { state, getProps, getListeners, handleSubmit, reset } = useForm(
   {
     email: '',
     password: '',
@@ -116,6 +116,9 @@ In your template:
     </span>
 
     <button type="submit" :disabled="state.submitting.value">Submit</button>
+    <button type="button" :disabled="!state.isDirty.value" @click="reset()">
+      Reset
+    </button>
   </form>
 </template>
 ```
@@ -129,6 +132,7 @@ The `useForm` composable provides the following features:
 - **Form submission handling**: Handle form submissions with loading states
 - **String trimming**: Optionally trim string values before validation and submission
 - **Form reset**: Reset form to initial values
+- **Dirty state tracking**: `state.isDirty` indicates whether form values differ from initial values (useful for unsaved-changes warnings, enabling reset buttons, etc.)
 - **Reactive state**: All form state is reactive and can be watched for changes
 
 ### Options

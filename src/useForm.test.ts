@@ -44,6 +44,40 @@ it('should reset form to initial values', () => {
   expect(state.values.email.value).toBe('john@example.com')
 })
 
+it('should have isDirty false when values match initial', () => {
+  const { state } = useForm<TestForm>(initialValues)
+
+  expect(state.isDirty.value).toBe(false)
+})
+
+it('should have isDirty true when a value changes', () => {
+  const { state } = useForm<TestForm>(initialValues)
+
+  state.values.name.value = 'Jane'
+
+  expect(state.isDirty.value).toBe(true)
+})
+
+it('should have isDirty false after reset', () => {
+  const { state, reset } = useForm<TestForm>(initialValues)
+
+  state.values.name.value = 'Jane'
+  expect(state.isDirty.value).toBe(true)
+
+  reset()
+  expect(state.isDirty.value).toBe(false)
+})
+
+it('should have isDirty false when values are reverted to initial', () => {
+  const { state } = useForm<TestForm>(initialValues)
+
+  state.values.name.value = 'Jane'
+  expect(state.isDirty.value).toBe(true)
+
+  state.values.name.value = 'John'
+  expect(state.isDirty.value).toBe(false)
+})
+
 it('should handle field validation', async () => {
   const { state, handleSubmit } = useForm<TestForm>(initialValues, {
     validate: {
