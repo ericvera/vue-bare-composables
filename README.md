@@ -2,13 +2,13 @@
 
 **Vue composables for a frustration-free development experience**
 
-[![github license](https://img.shields.io/github/license/ericvera/vue-bare-composables.svg?style=flat-square)](https://github.com/ericvera/vue-bare-composables/blob/master/LICENSE)
+[![github license](https://img.shields.io/github/license/ericvera/vue-bare-composables.svg?style=flat-square)](https://github.com/ericvera/vue-bare-composables/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/vue-bare-composables.svg?style=flat-square)](https://npmjs.org/package/vue-bare-composables)
 
 ## Features
 
 - 🎯 **Type-safe**: Built with TypeScript using the strictest configuration
-- 🪶 **Lightweight**: Zero dependencies besides Vue
+- 🪶 **Lightweight**: Zero dependencies besides Vue (Pinia required for useSnackbarStore)
 - 🧩 **Modular**: Use only what you need
 - 📦 **Tree-shakeable**: Unused code is removed in production builds
 - 🔍 **Form validation**: Built-in support for field and form-level validation
@@ -95,6 +95,8 @@ In your template:
 ```vue
 <template>
   <form @submit.prevent="onSubmit">
+    <span v-if="state.globalError.value">{{ state.globalError.value }}</span>
+
     <input
       id="email"
       type="email"
@@ -133,6 +135,7 @@ The `useForm` composable provides the following features:
 - **String trimming**: Optionally trim string values before validation and submission
 - **Form reset**: Reset form to initial values
 - **Dirty state tracking**: `state.isDirty` indicates whether form values differ from initial values (useful for unsaved-changes warnings, enabling reset buttons, etc.)
+- **Form-level errors**: `state.globalError` displays validation errors from `globalValidate` (e.g., cross-field validation)
 - **Reactive state**: All form state is reactive and can be watched for changes
 
 ### Options
@@ -213,11 +216,11 @@ useFixToVisualViewport(element, {
   location: 'top',
 })
 
-// For positioning above another element
+// For positioning above another element (pass the element, e.g. anotherElement.value if using a ref)
 useFixToVisualViewport(element, {
   layoutViewportId: 'viewport',
   location: 'above',
-  relativeElement: anotherElement,
+  relativeElement: anotherElement.value,
   distance: 10,
 })
 
