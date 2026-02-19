@@ -13,6 +13,8 @@ jobs:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
       contents: write
+      # For trusted publishers deployment.
+      id-token: write
 
     steps:
       - name: Checkout
@@ -45,10 +47,8 @@ jobs:
           github-token: ${{ github.token }}
 
       - name: Publish to NPM
-        uses: JS-DevTools/npm-publish@v3
+        uses: JS-DevTools/npm-publish@v4
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Release
         uses: ncipollo/release-action@v1
