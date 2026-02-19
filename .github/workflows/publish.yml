@@ -49,6 +49,8 @@ jobs:
       - name: Publish to NPM
         uses: JS-DevTools/npm-publish@v4
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        with:
+          provenance: true
 
       - name: Create Release
         uses: ncipollo/release-action@v1
