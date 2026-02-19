@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
         run: yarn
@@ -45,6 +46,10 @@ jobs:
           # in the release notes.
           output-file: 'false'
           github-token: ${{ github.token }}
+
+      - name: Upgrade npm (required for Trusted Publishing)
+        run: npm install -g npm@latest
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
 
       - name: Publish to NPM
         uses: JS-DevTools/npm-publish@v4
