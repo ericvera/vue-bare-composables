@@ -132,12 +132,8 @@ it('should set up mutation observer for above position', () => {
 
   const mockObserve = vi.fn()
   const mockDisconnect = vi.fn()
-  const MockMutationObserver = vi.fn().mockImplementation(function (this: {
-    observe: typeof mockObserve
-    disconnect: typeof mockDisconnect
-  }) {
-    this.observe = mockObserve
-    this.disconnect = mockDisconnect
+  const MockMutationObserver = vi.fn().mockImplementation(function () {
+    return { observe: mockObserve, disconnect: mockDisconnect }
   })
 
   vi.stubGlobal('MutationObserver', MockMutationObserver)
@@ -306,12 +302,8 @@ it('should handle cleanup on unmount for above position', () => {
   document.body.appendChild(viewport)
 
   const mockDisconnect = vi.fn()
-  const MockMutationObserver = vi.fn().mockImplementation(function (this: {
-    observe: ReturnType<typeof vi.fn>
-    disconnect: typeof mockDisconnect
-  }) {
-    this.observe = vi.fn()
-    this.disconnect = mockDisconnect
+  const MockMutationObserver = vi.fn().mockImplementation(function () {
+    return { observe: vi.fn(), disconnect: mockDisconnect }
   })
 
   vi.stubGlobal('MutationObserver', MockMutationObserver)
@@ -362,12 +354,8 @@ it('should handle ref-based options for above position', () => {
 
   const mockObserve = vi.fn()
   const mockDisconnect = vi.fn()
-  const MockMutationObserver = vi.fn().mockImplementation(function (this: {
-    observe: typeof mockObserve
-    disconnect: typeof mockDisconnect
-  }) {
-    this.observe = mockObserve
-    this.disconnect = mockDisconnect
+  const MockMutationObserver = vi.fn().mockImplementation(function () {
+    return { observe: mockObserve, disconnect: mockDisconnect }
   })
 
   vi.stubGlobal('MutationObserver', MockMutationObserver)
