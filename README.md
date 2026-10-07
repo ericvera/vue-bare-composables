@@ -29,7 +29,7 @@ pnpm add vue-bare-composables
 ## Requirements
 
 - Vue 3.x or higher
-- Node.js 22 or higher
+- Node.js 24 or higher
 
 ## Usage
 
