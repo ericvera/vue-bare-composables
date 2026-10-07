@@ -134,6 +134,7 @@ The `useForm` composable provides the following features:
 - **Form submission handling**: Handle form submissions with loading states
 - **String trimming**: Optionally trim string values before validation and submission
 - **Form reset**: Reset form to initial values
+- **Programmatic updates**: `setValue(key, value)` sets a field from code with the same behavior as user input (clears the global error and re-validates a field whose error is showing)
 - **Dirty state tracking**: `state.isDirty` indicates whether form values differ from initial values (useful for unsaved-changes warnings, enabling reset buttons, etc.)
 - **Form-level errors**: `state.globalError` displays validation errors from `globalValidate` (e.g., cross-field validation)
 - **Reactive state**: All form state is reactive and can be watched for changes
