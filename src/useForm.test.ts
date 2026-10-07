@@ -164,6 +164,117 @@ it('should update field value and clear errors on input', async () => {
   expect(state.errors.name.value).toBeUndefined()
 })
 
+it('should update field value and clear a shown error with setValue', async () => {
+  const { state, handleSubmit, setValue } = useForm<TestForm>(initialValues, {
+    validate: {
+      name: (value: unknown) => (value === '' ? 'Name is required' : undefined),
+    },
+  })
+
+  state.values.name.value = ''
+  await handleSubmit(vi.fn())()
+  expect(state.errors.name.value).toBe('Name is required')
+
+  await setValue('name', 'John Doe')
+
+  expect(state.values.name.value).toBe('John Doe')
+  expect(state.errors.name.value).toBeUndefined()
+})
+
+it('should keep a shown error when setValue produces the same error', async () => {
+  const { state, handleSubmit, setValue } = useForm<TestForm>(initialValues, {
+    validate: {
+      name: (value: unknown) =>
+        typeof value === 'string' && value.length < 2
+          ? 'Name is required'
+          : undefined,
+    },
+  })
+
+  state.values.name.value = ''
+  await handleSubmit(vi.fn())()
+  expect(state.errors.name.value).toBe('Name is required')
+
+  await setValue('name', 'x')
+
+  expect(state.values.name.value).toBe('x')
+  expect(state.errors.name.value).toBe('Name is required')
+})
+
+it('should hide a shown error when setValue changes the error message', async () => {
+  const { state, handleSubmit, setValue } = useForm<TestForm>(initialValues, {
+    validate: {
+      name: (value: unknown) => {
+        if (value === '') {
+          return 'Name is required'
+        }
+        if (typeof value === 'string' && value.length < 2) {
+          return 'Too short'
+        }
+        return undefined
+      },
+    },
+  })
+
+  state.values.name.value = ''
+  await handleSubmit(vi.fn())()
+  expect(state.errors.name.value).toBe('Name is required')
+
+  await setValue('name', 'x')
+
+  expect(state.errors.name.value).toBeUndefined()
+})
+
+it('should clear the global error with setValue', async () => {
+  const { state, handleSubmit, setValue } = useForm<TestForm>(initialValues, {
+    globalValidate: (values: TestForm, { setGlobalError }) => {
+      if (values.age < 18) {
+        setGlobalError('Form has validation errors')
+      }
+    },
+  })
+
+  state.values.age.value = 16
+  await handleSubmit(vi.fn())()
+  expect(state.globalError.value).toBe('Form has validation errors')
+
+  await setValue('age', 20)
+
+  expect(state.values.age.value).toBe(20)
+  expect(state.globalError.value).toBeUndefined()
+})
+
+it('should do nothing when setValue receives the current value', async () => {
+  const { state, handleSubmit, setValue } = useForm<TestForm>(initialValues, {
+    globalValidate: (values: TestForm, { setGlobalError }) => {
+      if (values.age < 18) {
+        setGlobalError('Form has validation errors')
+      }
+    },
+  })
+
+  state.values.age.value = 16
+  await handleSubmit(vi.fn())()
+  expect(state.globalError.value).toBe('Form has validation errors')
+
+  await setValue('age', state.values.age.value)
+
+  expect(state.globalError.value).toBe('Form has validation errors')
+})
+
+it('should not validate with setValue when no error is showing', async () => {
+  const validateName = vi.fn(() => 'Name is required')
+  const { state, setValue } = useForm<TestForm>(initialValues, {
+    validate: { name: validateName },
+  })
+
+  await setValue('name', '')
+
+  expect(state.values.name.value).toBe('')
+  expect(validateName).not.toHaveBeenCalled()
+  expect(state.errors.name.value).toBeUndefined()
+})
+
 it('should provide correct props for form fields', () => {
   const { getProps } = useForm<TestForm>(initialValues)
   const nameProps = getProps('name')

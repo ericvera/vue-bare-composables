@@ -74,6 +74,36 @@ export const useForm = <T extends object>(
     globalError.value = error
   }
 
+  const setValue = async <K extends keyof T>(
+    key: K,
+    value: UnwrapRef<T[K]>,
+  ): Promise<void> => {
+    if (values[key].value === value) {
+      return
+    }
+
+    values[key].value = value
+
+    // Always clear the global error when a field is updated.
+    setGlobalError(undefined)
+
+    // In the case where there is already an error being displayed,
+    // validate the field and remove the error only when the error
+    // is addressed or changes.
+    if (errors[key].value) {
+      const validator = options.validate?.[key]
+
+      if (typeof validator === 'function') {
+        // Only update visible error if the error has changed
+        setError(key, await validator(value), false)
+      }
+
+      if (internalErrors[key] !== errors[key].value) {
+        errors[key].value = undefined
+      }
+    }
+  }
+
   const getInitialValues = (): T => {
     if (typeof initialValues === 'function') {
       return initialValues()
@@ -217,34 +247,9 @@ export const useForm = <T extends object>(
       submitting.value = false
     },
 
-    getListeners: (key: keyof T) => {
+    getListeners: <K extends keyof T>(key: K) => {
       return {
-        'update:modelValue': async (value: UnwrapRef<T[typeof key]>) => {
-          if (values[key].value === value) {
-            return
-          }
-
-          values[key].value = value
-
-          // Always clear the global error when a field is updated.
-          setGlobalError(undefined)
-
-          // In the case where there is already an error being displayed,
-          // validate the field and remove the error only when the error
-          // is addressed or chanages.
-          if (errors[key].value) {
-            const validator = options.validate?.[key]
-
-            if (typeof validator === 'function') {
-              // Only update visible error if the error has changed
-              setError(key, await validator(value), false)
-            }
-
-            if (internalErrors[key] !== errors[key].value) {
-              errors[key].value = undefined
-            }
-          }
-        },
+        'update:modelValue': (value: UnwrapRef<T[K]>) => setValue(key, value),
       }
     },
 
@@ -257,5 +262,6 @@ export const useForm = <T extends object>(
 
     setError,
     setGlobalError,
+    setValue,
   }
 }
