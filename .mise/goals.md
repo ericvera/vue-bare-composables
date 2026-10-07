@@ -17,6 +17,19 @@ Raised in review of feat/pop-up-config.
 - Public API addition to the published npm package (v3.6.4); commit as `feat:` for a minor bump.
 - The consumer `useOrderLocationPopUpPage.ts` is in a different repo: `/Users/eric/Code/okven/hosting/composables/useOrderLocationPopUpPage.ts` (`setStartDate` :267, listener calls at :268 and :273), depending on `vue-bare-composables@^3.6.4`. It can only switch after this package is released.
 
-## Open questions
+## Scope
 
-- Is the okven `setStartDate` replacement in or out of this run's scope?
+- In: `setValue(key, value)` on useForm, `getListeners` delegating to it, tests in `src/useForm.test.ts`, short README mention.
+- Out: replacing the listener calls in okven `useOrderLocationPopUpPage.ts` (`setStartDate`); the owner does that after release and dependency bump.
+
+## Assumptions
+
+- Signature is generic `<K extends keyof T>(key: K, value: UnwrapRef<T[K]>) => Promise<void>`, matching `getProps`.
+- `setValue` keeps every listener behavior unchanged: same-value no-op, no trimming, validates only when an error is showing, clears the global error.
+- Ships as a `feat:` commit (minor bump).
+
+## Proposal
+
+- Issue: setting a useForm field from code skips the listener's error clearing/re-validation unless callers invoke `getListeners(field)['update:modelValue']`.
+- Approach: lift the listener body into an exported `setValue(key, value)`, have `getListeners` delegate to it, add tests and a README note; okven switch-over is out of scope.
+- Skips: spec and critic (one module, additive API, nothing hard to undo).
