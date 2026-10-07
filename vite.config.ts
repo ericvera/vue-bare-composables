@@ -3,7 +3,6 @@ import { defineConfig, PluginOption } from 'vite'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   plugins: [vue(), dts()] as PluginOption[],
   build: {
     lib: {

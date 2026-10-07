@@ -4,23 +4,20 @@ export interface UseFixToVisualViewportOptionsBase {
   layoutViewportId: string
 }
 
-export interface UseFixToVisualViewportOptionsStatic
-  extends UseFixToVisualViewportOptionsBase {
+export interface UseFixToVisualViewportOptionsStatic extends UseFixToVisualViewportOptionsBase {
   location: 'bottom' | 'top'
   relativeElement?: never
   distance?: never
 }
 
-export interface UseFixToVisualViewportOptionsRelative
-  extends UseFixToVisualViewportOptionsBase {
+export interface UseFixToVisualViewportOptionsRelative extends UseFixToVisualViewportOptionsBase {
   location: 'above'
   relativeElement: HTMLElement | null
   distance: number
 }
 
 export type UseFixToVisualViewportOptions =
-  | UseFixToVisualViewportOptionsStatic
-  | UseFixToVisualViewportOptionsRelative
+  UseFixToVisualViewportOptionsStatic | UseFixToVisualViewportOptionsRelative
 
 const updateElementPositionToViewportChanges = (
   element: HTMLElement | null,
@@ -100,9 +97,7 @@ const updateElementPositionToViewportChanges = (
 
 export const useFixToVisualViewport = (
   elementGetter:
-    | (() => HTMLElement | null)
-    | (HTMLElement | null)
-    | Ref<HTMLElement | null>,
+    (() => HTMLElement | null) | (HTMLElement | null) | Ref<HTMLElement | null>,
   options: UseFixToVisualViewportOptions | Ref<UseFixToVisualViewportOptions>,
 ): void => {
   const layoutViewport = ref<HTMLElement | null>(null)
