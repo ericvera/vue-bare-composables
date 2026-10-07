@@ -8,7 +8,7 @@
     "critic": "done",
     "execute": "done",
     "review": "done",
-    "gate": null
+    "gate": "done"
   },
   "amendments": 1,
   "checks_from": "283e549dfcbcce23219a3686f396dce1ad0268b2",
