@@ -1,7 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { assert, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
-import { useFixToVisualViewport } from './useFixToVisualViewport.js'
+import {
+  type UseFixToVisualViewportOptions,
+  useFixToVisualViewport,
+} from './useFixToVisualViewport.js'
 
 let originalMutationObserver: typeof window.MutationObserver
 
@@ -388,10 +391,9 @@ it('should update when ref options change', () => {
     setup() {
       const element = ref(document.createElement('div'))
 
-      // Use a properly typed options ref that can accept both location values
-      const options = ref({
+      const options = ref<UseFixToVisualViewportOptions>({
         layoutViewportId: 'viewport',
-        location: 'bottom' as 'bottom' | 'top',
+        location: 'bottom',
       })
 
       useFixToVisualViewport(element, options)
