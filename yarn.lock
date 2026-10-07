@@ -3242,7 +3242,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.4.1"
     vue-tsc: "npm:^3.3.12"
   peerDependencies:
-    pinia: 3.x
+    pinia: 4.x
     vue: 3.x
   languageName: unknown
   linkType: soft

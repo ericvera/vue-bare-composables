@@ -26,7 +26,7 @@
   },
   "packageManager": "yarn@4.12.0",
   "peerDependencies": {
-    "pinia": "3.x",
+    "pinia": "4.x",
     "vue": "3.x"
   },
   "devDependencies": {

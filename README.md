@@ -29,6 +29,7 @@ pnpm add vue-bare-composables
 ## Requirements
 
 - Vue 3.x or higher
+- Pinia 4.x (only for useSnackbarStore)
 - Node.js 24 or higher
 
 ## Usage
